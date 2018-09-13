@@ -12,8 +12,8 @@ import Navigation from './components/navigation';
 import Login from './components/login-form';
 import ClassList from './components/class-list';
 import buildPath from '../build/asset-manifest.json';
-
 import path from 'path';
+
 
 const app = express();
 
@@ -24,8 +24,9 @@ const store = createStore(combineReducers({
 
 app.use((request,response,next) => {
     if (request.url.startsWith('/static')){
-        return next();
+         return next();
     }
+
     const appString = renderToString(
         <Provider store={store}>
             <StaticRouter context={{}} location={request.url}>
@@ -42,12 +43,13 @@ app.use((request,response,next) => {
         </Provider>
     );
 
+    console.log(appString);
 
+    const html = `<html><div id="root">${appString}</div><script src="/${buildPath['main.js']}"></script></html>`;
 
-    const html =  `<html><body><div id="root">${appString}</div><script src="/${buildPath['main.js']}"></script></body></html>`;
     response.send(html);
 });
 
-app.use('/', express.static(path.resolve('build')));
+app.use('/',express.static(path.resolve('build')));
 
 app.listen('9000',()=>console.log("SSR Server Start"));
